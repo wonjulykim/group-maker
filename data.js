@@ -1,4 +1,5 @@
 var DB = {
+
   students: JSON.parse(localStorage.getItem('students') || '[]'),
   groups: JSON.parse(localStorage.getItem('groups') || '[]'),
   settings: JSON.parse(localStorage.getItem('settings') || 'null') || {
@@ -15,6 +16,7 @@ var DB = {
     }
   },
 
+  // ⭐ 저장 함수
   save() {
     localStorage.setItem('students', JSON.stringify(this.students));
     localStorage.setItem('groups', JSON.stringify(this.groups));
@@ -28,7 +30,7 @@ var DB = {
   addStudent(data) {
     data.id = Date.now().toString();
     this.students.push(data);
-    this.save(); // 🔥 중요
+    this.save(); // 🔥 핵심
   },
 
   updateStudent(id, newData) {
