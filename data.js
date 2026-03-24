@@ -16,7 +16,8 @@ function saveSettings() {
 
   DB.saveSettings(newSettings);
 
-  renderSettingsPanel();
+  // 🔥 수정 (핵심)
+  AdminPage.renderSettingsPanel();
 
   Utils.showToast('설정이 저장되었습니다.');
 }
