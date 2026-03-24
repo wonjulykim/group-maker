@@ -1,73 +1,38 @@
-var DB = {
+function saveSettings() {
 
-  students: JSON.parse(localStorage.getItem('students') || '[]'),
-  groups: JSON.parse(localStorage.getItem('groups') || '[]'),
-  settings: JSON.parse(localStorage.getItem('settings') || 'null') || {
-    adminPin: "1234",
-    groupSize: 4,
-    separateClasses: false,
-    weights: {
-      english: 0.3,
-      mbti: 0.2,
-      gender: 0.2,
-      leadership: 0.15,
-      creativity: 0.1,
-      collaboration: 0.05
-    }
-  },
+  var groupSize = parseInt(document.getElementById('set-group-size').value);
+  var separateClasses = document.getElementById('set-separate').checked;
 
-  // ⭐ 저장 함수
-  save() {
-    localStorage.setItem('students', JSON.stringify(this.students));
-    localStorage.setItem('groups', JSON.stringify(this.groups));
-    localStorage.setItem('settings', JSON.stringify(this.settings));
-  },
+  var wE = parseInt(document.getElementById('set-w-eng').value);
+  var wM = parseInt(document.getElementById('set-w-mbti').value);
+  var wG = parseInt(document.getElementById('set-w-gender').value);
+  var wL = parseInt(document.getElementById('set-w-lead').value);
+  var wC = parseInt(document.getElementById('set-w-create').value);
+  var wCo = parseInt(document.getElementById('set-w-collab').value);
 
-  getStudents() {
-    return this.students;
-  },
-
-  addStudent(data) {
-    data.id = Date.now().toString();
-    this.students.push(data);
-    this.save(); // 🔥 핵심
-  },
-
-  updateStudent(id, newData) {
-    this.students = this.students.map(s => s.id === id ? {...s, ...newData} : s);
-    this.save();
-  },
-
-  deleteStudent(id) {
-    this.students = this.students.filter(s => s.id !== id);
-    this.save();
-  },
-
-  deleteAllStudents() {
-    this.students = [];
-    this.save();
-  },
-
-  getGroups() {
-    return this.groups;
-  },
-
-  saveGroups(groups) {
-    this.groups = groups;
-    this.save();
-  },
-
-  clearGroups() {
-    this.groups = [];
-    this.save();
-  },
-
-  getSettings() {
-    return this.settings;
-  },
-
-  saveSettings(settings) {
-    this.settings = settings;
-    this.save();
+  if (wE+wM+wG+wL+wC+wCo !== 100) {
+    Utils.showToast('가중치 합이 100%가 되어야 합니다.', 'warning');
+    return;
   }
-};
+
+  var newPin = document.getElementById('set-pin').value.trim();
+
+  // 🔥 완전히 새 객체 생성 (핵심)
+  var newSettings = {
+    groupSize: groupSize,
+    separateClasses: separateClasses,
+    weights: {
+      english: wE/100,
+      mbti: wM/100,
+      gender: wG/100,
+      leadership: wL/100,
+      creativity: wC/100,
+      collaboration: wCo/100
+    },
+    adminPin: newPin.length >= 4 ? newPin : DB.getSettings().adminPin
+  };
+
+  DB.saveSettings(newSettings);
+
+  Utils.showToast('설정이 저장되었습니다.');
+}
