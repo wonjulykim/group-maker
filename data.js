@@ -1,7 +1,7 @@
 var DB = {
-  students: [],
-  groups: [],
-  settings: {
+  students: JSON.parse(localStorage.getItem('students') || '[]'),
+  groups: JSON.parse(localStorage.getItem('groups') || '[]'),
+  settings: JSON.parse(localStorage.getItem('settings') || 'null') || {
     adminPin: "1234",
     groupSize: 4,
     separateClasses: false,
@@ -15,6 +15,12 @@ var DB = {
     }
   },
 
+  save() {
+    localStorage.setItem('students', JSON.stringify(this.students));
+    localStorage.setItem('groups', JSON.stringify(this.groups));
+    localStorage.setItem('settings', JSON.stringify(this.settings));
+  },
+
   getStudents() {
     return this.students;
   },
@@ -22,18 +28,22 @@ var DB = {
   addStudent(data) {
     data.id = Date.now().toString();
     this.students.push(data);
+    this.save(); // 🔥 중요
   },
 
   updateStudent(id, newData) {
     this.students = this.students.map(s => s.id === id ? {...s, ...newData} : s);
+    this.save();
   },
 
   deleteStudent(id) {
     this.students = this.students.filter(s => s.id !== id);
+    this.save();
   },
 
   deleteAllStudents() {
     this.students = [];
+    this.save();
   },
 
   getGroups() {
@@ -42,10 +52,12 @@ var DB = {
 
   saveGroups(groups) {
     this.groups = groups;
+    this.save();
   },
 
   clearGroups() {
     this.groups = [];
+    this.save();
   },
 
   getSettings() {
@@ -54,5 +66,6 @@ var DB = {
 
   saveSettings(settings) {
     this.settings = settings;
+    this.save();
   }
 };
